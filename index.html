@@ -1,1 +1,459 @@
-Hello World
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Basic LinkButton - jQuery EasyUI Demo</title>
+	<link rel="stylesheet" type="text/css" href="themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="themes/icon.css">
+	<link rel="stylesheet" type="text/css" href="themes/color.css">
+	<script type="text/javascript" src="jquery.min.js"></script>
+	<script type="text/javascript" src="jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="locale/easyui-lang-zh_CN.js"></script>
+	<script type="text/javascript" src="common.js"></script>
+	
+<style type="text/css">
+th, td {  
+	text-align: center;
+}
+.add-info-fm {
+	margin-top: 10px;
+	margin-left: 10px;
+	margin-right: 10px;
+	padding: 10px;
+	/* border: 1px solid; */
+	/* border-color: #ccc; */
+	/* border-radius: .3em; */
+}
+label {
+    text-align: left !Important;
+    margin-left: 10px;
+	display: inline-block;
+	width: 60px;
+}
+input {
+	margin-top: 5px;
+	width: 200px;
+}
+.common-dialog-style {
+	padding-top:5px;
+	padding-left:5px;
+	padding-right: 5px;
+	padding-bottom: 5px;
+}
+
+</style>
+</head>
+<body>
+	<div style="text-align:center;width:100%;height:600px;">
+		<!-- 培训室按钮 -->
+		<div id="room_btn_info" style="padding:25px 0 15px 0;">
+			<a id="btn_room_401" class="easyui-linkbutton c6" data-options="" style="width:120px">培训室401</a>
+			<a id="btn_room_402" class="easyui-linkbutton c6" data-options="" style="width:120px">培训室402</a>
+			<a id="btn_room_403" class="easyui-linkbutton c6" data-options="" style="width:120px">培训室403</a>
+			<a id="btn_room_404" class="easyui-linkbutton c6" data-options="" style="width:120px">培训室404</a>
+			<a id="btn_room_405" class="easyui-linkbutton c6" data-options="" style="width:120px">培训室405</a>
+			<a id="btn_room_406" class="easyui-linkbutton c6" data-options="" style="width:120px">培训室406</a>
+		</div>
+		<!-- 本周预定信息 -->
+		<div style="width:100%;height:500px;border:1px solid;">
+			<!-- <table id="tb_curr_week_info_id"></table> -->
+			<table id="tb_curr_week_info_id" class="easyui-datagrid" style="width:100%;" 
+				data-options="singleSelect:true" toolbar="#tb_curr_week_info_tb">
+				<thead>
+					<tr>
+						<th field="date" width="15%">日期</th>
+						<th field="week" width="10%">星期</th>
+						<th field="morning" width="25%" data-options="styler:morningCellStyler">上午（08：00 到 12：00）</th>
+						<th field="afternoon" width="25%" data-options="styler:afternoonCellStyler">下午（12：00 到 18：00）</th>
+						<th field="night" width="25%" data-options="styler:nightCellStyler">晚上（18：00 到 22：00）</th>
+					</tr>
+				</thead>
+			</table>
+		</div>
+		<!-- 表格工具条:培训室信息 -->
+		<div id="tb_curr_week_info_tb">
+			<div style="width:100%;height:30px;padding:5px">
+				<p id="room_name">当前会议室：<p>
+			</div>
+			<div style="width:100%;height:30px;padding:5px;margin-bottom:10px;">
+				<p id="equipment_info">设备信息：<p>
+			</div>
+		</div>
+	</div>
+	<!-- 预订详情弹出窗 -->
+	<div id="booking_info_dialog" class="easyui-dialog common-dialog-style" style="width:820px;height:400px;"
+        data-options="modal:true,closed:true">
+		<div id="selected_date" hidden=true></div><div id="selected_type" hidden=true></div>
+		<table id="tb_booking_info_detail" class="easyui-datagrid"
+			data-options="fitColumns:true,singleSelect:true" toolbar="#tb_booking_info_detail_tb">
+			<thead>
+				<tr>
+					<th field="ck" checkbox="true"></th>
+					<th width="9%" data-options="field:'bookMan',">预订人</th>
+					<th width="9%" data-options="field:'startTime'">开始时间</th>
+					<th width="9%" data-options="field:'endTime'">结束时间</th>
+					<th width="10%" data-options="field:'jobNumber'">工号</th>
+					<th width="10%" data-options="field:'department'">部门</th>
+					<th width="15%" data-options="field:'email'">邮箱</th>
+					<th width="15%" data-options="field:'phone'">联系电话</th>
+					<th width="20%" data-options="field:'reason'">预订事由</th>
+				</tr>
+			</thead>
+		</table>
+	</div>
+
+	<!-- 预订表格工具条 -->
+	<div id="tb_booking_info_detail_tb" class="common-dialog-style">
+		<a id="btn_add_info" class="easyui-linkbutton" data-options="iconCls:'icon-add'" style="width:70px;">预订</a>
+		<a id="btn_edit_info" class="easyui-linkbutton" data-options="iconCls:'icon-edit'" style="width:70px;">修改</a>
+		<a id="btn_del_info" class="easyui-linkbutton" data-options="iconCls:'icon-remove'" style="width:70px;">删除</a>
+	</div>
+
+	<div id="add_booking_info_dialog" class="easyui-dialog common-dialog-style" title="新增预订信息" style="width:360px;height:480px;"
+		data-options="modal:true,closed:true">
+		<form id="fm_add_booking_info" method="post" class="add-info-fm">
+			<div>
+				<label for="bookMan">预订人:</label>
+				<input class="easyui-textbox" type="text" name="bookMan" data-options="required:true" />
+			</div><br/>
+			<div>
+				<label for="jobNumber">工号:</label>
+				<input class="easyui-textbox" type="text" name="jobNumber" data-options="required:true" />
+			</div><br/>
+			<div>
+				<label for="department">部门:</label>
+				<input class="easyui-textbox" type="text" name="department" data-options="required:true" />
+			</div><br/>
+			<div>
+				<label for="email">邮箱:</label>
+				<input class="easyui-textbox" type="text" name="email" data-options="validType:'email',required:true" />
+			</div><br/>
+			<div>
+				<label for="phone">联系电话:</label>
+				<input class="easyui-textbox" type="text" name="phone" data-options="required:true" />
+			</div><br/>
+			<div>
+				<label for="date">日期:</label>
+				<input id="date" class="easyui-textbox" name="date" data-options="disabled:true" />
+			</div><br/>
+			<div>
+				<label for="startTime">开始时间:</label>
+				<input id="startTime" class="easyui-combobox" name="startTime"   
+				data-options="valueField:'value',textField:'name',required:true,editable:false" />
+				<!-- <input id="startTimeHour" class="easyui-numberspinner" style="width:80px;" required="required" data-options="min:08,max:22"> : -->
+				<!-- <input id="startTimeMin" class="easyui-numberspinner" style="width:80px;" required="required" data-options="min:00,max:30,increment:30" /> -->
+			</div><br/>
+			<div>
+				<label for="endTime">结束时间:</label>
+				<!-- <input id="endTimeHour" class="easyui-numberspinner" style="width:80px;" required="required" data-options="min:08,max:22"> : -->
+				<!-- <input id="endTimeMin" class="easyui-numberspinner" style="width:80px;" required="required" data-options="min:00,max:30,increment:30" /> -->
+				<input id="endTime" class="easyui-combobox" name="endTime" data-options="valueField:'value',textField:'name',required:true,editable:false" />
+			</div><br/>
+			<div>
+				<label for="reason">预订事由:</label>
+				<input class="easyui-textbox" type="text" name="reason" data-options="multiline:'true',required:true" />
+			</div><br/>
+			<div style="text-align:center;">
+		        <a id="submit_btn" class="easyui-linkbutton" data-options="iconCls:'icon-ok'" style="width:80px;">提交</a>
+	        </div>
+		</form>
+	</div>
+</body>
+
+<script>
+// 表格field对应属性值
+var CONST_MORNING_FIELD = 'morning';
+var CONST_AFTERNOON_FIELD = 'afternoon';
+var CONST_NIGHT_FIELD = 'night';
+
+var CONST_MORNING_FIELD_TITLE = '上午（08：00 到 12：00）';
+var CONST_AFTERNOON_FIELD_TITLE = '下午（12：00 到 18：00）';
+var CONST_NIGHT_FIELD_TITLE = '晚上（18：00 到 22：00）';
+	
+$(function(){
+	init();
+})
+	
+function init() {
+
+	/** 绑定按钮事件 **/
+	var btns = $("#room_btn_info a");
+	for(var i=0; i < btns.length; i++) {
+		// console.info(btns[i]);
+		$(btns[i]).bind('click',function(){
+			getRoomBookInfo();
+		});
+	}
+
+	/** 绑定表格事件 **/
+	$('#tb_curr_week_info_id').datagrid({
+		onClickCell:function(rowIndex, field, value) {
+			// 点击预订信息单元格才显示对话框
+			if (field == CONST_MORNING_FIELD || field == CONST_AFTERNOON_FIELD || field == CONST_NIGHT_FIELD) {
+				//console.info(rowIndex, field, value);
+				//showBookingDetail(rowData);
+				var cellData = [];
+				var rowData = $(this).datagrid('getData').rows[rowIndex];
+				var bookInfoDetail = rowData.bookInfoList;
+				//console.info("rowData:",rowData, "bookInfoDetail:", bookInfoDetail);
+				if (bookInfoDetail != null && bookInfoDetail.length> 0) {
+					for (var i = 0; i < bookInfoDetail.length; i++) {
+						if (bookInfoDetail[i] == null) {
+							continue;
+						}
+						if (field == CONST_MORNING_FIELD &&　bookInfoDetail[i].endTime <= MONING_END_TIME
+							|| field == CONST_AFTERNOON_FIELD && bookInfoDetail[i].startTime >= AFTERNOON_START_TIME && bookInfoDetail[i].endTime <= AFTERNOON_END_TIME
+							|| field == CONST_NIGHT_FIELD && bookInfoDetail[i].startTime >= NIGHT_START_TIME && bookInfoDetail[i].endTime <= NIGHT_END_TIME) {
+								cellData.push(bookInfoDetail[i]);
+						}
+					}
+				}
+				//console.info("cellData:", cellData);
+				var newTitle = "已预订信息";
+				if (field == CONST_MORNING_FIELD) {
+					newTitle = CONST_MORNING_FIELD_TITLE;
+				} else if (field == CONST_AFTERNOON_FIELD) {
+					newTitle = CONST_AFTERNOON_FIELD_TITLE;
+				} else if (field == CONST_NIGHT_FIELD) {
+					newTitle = CONST_NIGHT_FIELD_TITLE;
+				}
+				newTitle = rowData.date + "  " + rowData.week + "  "+newTitle;
+				$('#booking_info_dialog').panel({title: newTitle});
+				$('#booking_info_dialog').dialog('open');
+				$('#selected_date').text(rowData.date);
+				$('#selected_type').text(field);
+				$('#tb_booking_info_detail').datagrid('loadData', cellData);
+			}
+		},
+		onClickRow: function (rowIndex, rowData) {
+            $(this).datagrid('unselectRow', rowIndex);
+   		}
+	});
+
+	// 删除预订记录按钮
+	$('#btn_del_info').bind('click', function(){
+		var selectRecs = $('#tb_booking_info_detail').datagrid('getChecked');
+		console.info('selectRecs:', selectRecs);
+		if (selectRecs == null || selectRecs.length == 0) {
+			$.messager.alert('消息','请选择需要删除的记录!');
+			return;
+		}
+		$.messager.confirm('确认','您确认删除该预订记录吗？',function(r){    
+			if (r){    
+				alert('确认删除');    
+			}    
+		});
+	});
+
+	// 编辑预订记录按钮
+	$('#btn_edit_info').bind('click', function(){
+		var selectRecs = $('#tb_booking_info_detail').datagrid('getChecked');
+		console.info('selectRecs:', selectRecs);
+		if (selectRecs == null || selectRecs.length == 0) {
+			$.messager.alert('消息','请选择需要修改的记录!');
+			return;
+		}
+		openBookDetailDialog();
+		$('#fm_add_booking_info').form('load', selectRecs[0]);
+	});
+
+	// 新增预订记录按钮
+	$('#btn_add_info').bind('click', function(){
+		openBookDetailDialog();
+	});
+
+	$('#submit_btn').bind('click', function(){
+		var form = $('#fm_add_booking_info');
+		if (form.form('validate') && checkBookTime()) {
+			form.form('submit',{    
+				url:"./data/current_week_data.json",    
+				onSubmit: function(){    
+					    
+				},    
+				success:function(data){    
+					alert(data)    
+				}
+			});
+		}
+	})
+}
+
+function openBookDetailDialog() {
+	$('#fm_add_booking_info').form('reset');
+	$('#date').textbox('setValue', $('#selected_date').text());
+	var selectedType = $('#selected_type').text();
+	console.info("selectedType:", selectedType);
+	if(selectedType == CONST_MORNING_FIELD) {
+		loadSelectTimeData(CONST_MORNING_TIME);
+	} else if(selectedType == CONST_AFTERNOON_FIELD) {
+		loadSelectTimeData(CONST_AFTERNOON_TIME);
+	} else if(selectedType == CONST_NIGHT_FIELD) {
+		loadSelectTimeData(CONST_NIGHT_TIME);
+	}
+	$('#add_booking_info_dialog').dialog('open');
+}
+
+function loadSelectTimeData(data) {
+	$('#startTime').combobox('loadData',data);
+	$('#endTime').combobox('loadData',data);
+}
+
+function checkBookTime () {
+	if ($('#startTime').combobox('getValue') >= $('#endTime').combobox('getValue')){
+		$.messager.alert('消息', '结束时间必须大于开始时间！');
+		return false;
+	}
+	return true;
+}
+
+// function setNumberValue(min, max) {
+// 	console.info("min:", min, "max:",max);
+// 	$('#startTimeHour').numberspinner({min:min,max:(max-1)});
+// 	$('#endTimeHour').numberspinner({min:min,max:max});
+// }
+
+// 该函数用于格式化日期
+function dateFormatter(date){
+	var y = date.getFullYear();
+	var m = date.getMonth()+1;
+	var d = date.getDate();
+	return y +'-' + m + '-' + d;
+}
+
+function morningCellStyler (value, row, index) {
+	return cellStyler(value, row, index, CONST_MORNING_FIELD);
+}
+function afternoonCellStyler (value, row, index) {
+	return cellStyler(value, row, index, CONST_AFTERNOON_FIELD);
+}
+function nightCellStyler (value, row, index) {
+	return cellStyler(value, row, index, CONST_NIGHT_FIELD);
+}
+
+function cellStyler(value, row, index, type) {
+	console.info("cellStyler:", value, row, index,type);
+	var recDateTime = Date.parse(row.date + " 23:59:59");
+	var curDateTime = new Date().getTime();
+	//console.info("curDateTime > recDateTime", curDateTime > recDateTime);
+	// 小于当前日期的，显示为不可预订
+	if (curDateTime > recDateTime) {
+		return CAN_NOT_BOOK_COLOR;
+	}
+	var bookInfoList = row.bookInfoList;
+	// console.info("this:", this);
+	// 没有预订信息的，显示为可预订
+	if (bookInfoList == null || bookInfoList == 0) {
+		return CAN_BOOK_COLOR;
+	}
+	var morningList = [];
+	var afternoonList = [];
+	var nightList = [];
+	for (var i = 0; i < bookInfoList.length; i++) {
+		if (bookInfoList[i].startTime >= MONING_START_TIME && bookInfoList[i].endTime <= MONING_END_TIME) {
+			morningList.push(bookInfoList[i]);
+		} else if (bookInfoList[i].startTime >= AFTERNOON_START_TIME && bookInfoList[i].endTime <= AFTERNOON_END_TIME) {
+			afternoonList.push(bookInfoList[i]);
+		} else if (bookInfoList[i].startTime >= NIGHT_START_TIME && bookInfoList[i].endTime <= NIGHT_END_TIME) {
+			nightList.push(bookInfoList[i]);
+		}
+	}
+	// 判断上午是否还可以预订
+	if (type == CONST_MORNING_FIELD) {
+		return checkBookInfo(morningList, MONING_START_TIME, MONING_END_TIME);
+	// 判断下午是否还可以预订
+	} else if (type == CONST_AFTERNOON_FIELD) {
+		return checkBookInfo(afternoonList, AFTERNOON_START_TIME, AFTERNOON_END_TIME);
+	// 判断晚上是否还可以预订
+	} else if (type == CONST_NIGHT_FIELD) {
+		return checkBookInfo(nightList, NIGHT_START_TIME, NIGHT_END_TIME);
+	}
+}
+
+function checkBookInfo(bookList, startTime, endTime) {
+	if (bookList == null || bookList.length == 0) {
+		return CAN_BOOK_COLOR;
+	}
+	for (var i = 0; i < bookList.length; i++) {
+		if (bookList[i].startTime != startTime && bookList[bookList.length - 1].endTime != endTime) {
+			return BOOKING_COLOR;
+		}
+		if (i > 0 && bookList[i].startTime != bookList[i-1].endTime) {
+			return BOOKING_COLOR;
+		}
+	}
+	return CAN_NOT_BOOK_COLOR;
+}
+
+function getRoomBookInfo() {
+	$.ajax({  
+		type: "post",  
+		url: "./data/current_week_data.json",  
+		//data: JSON.stringify(json),
+		//dataType:"json",
+		success: function(data){
+			//console.info(data);
+			//alert("8:30" < "9:30");
+			$('#tb_curr_week_info_id').datagrid('loadData', genRoomInfoTableData(data));
+		},  
+		error:function(data){
+			$.messager.alert('title','连接服务器失败！',"error");
+		}  
+	});
+}
+
+function genRoomInfoTableData(data) {
+	
+	if (data == null || data.length == 0) {
+		return [];
+	}
+	for (var i=0; i < data.length; i++) {
+		if (i == 0) {
+			$('#room_name').html('当前会议室：' + data[0].room);
+			$('#equipment_info').html('设备信息：' + data[0].equipmentInfo);
+		}
+		var detail = data[i];
+		var morningInfo = '';
+		var afternoonInfo = '';
+		var nightInfo = '';
+		var bookInfoList = detail.bookInfoList;
+		if (bookInfoList != null && bookInfoList.length > 0) {
+			var bookInfo;
+			for(var j=0; j < bookInfoList.length; j++) {
+				bookInfo = bookInfoList[j];
+				//console.info("bookInfo:","8:00" < "10:30");
+				if (MONING_START_TIME <= bookInfo.startTime && bookInfo.endTime <= MONING_END_TIME) {
+					morningInfo += genBookInfoStyle(bookInfo);
+				} else if (AFTERNOON_START_TIME <= bookInfo.startTime && bookInfo.endTime <= AFTERNOON_END_TIME) {
+					afternoonInfo += genBookInfoStyle(bookInfo);
+				} else if (NIGHT_START_TIME <= bookInfo.startTime && bookInfo.endTime <= NIGHT_END_TIME) {
+					nightInfo += genBookInfoStyle(bookInfo);
+				}
+			}
+
+		} else {
+			morningInfo = afternoonInfo = nightInfo = "空闲";
+		}
+		detail.morning = morningInfo;
+		detail.afternoon = afternoonInfo;
+		detail.night = nightInfo;
+	}
+	return data;
+}
+
+function genBookInfoStyle(bookInfo) {
+	if (bookInfo) {
+		return '预订信息：' + bookInfo.bookMan + ' | ' + bookInfo.department + ' | ' + bookInfo.startTime + '-' + bookInfo.endTime + '<br/>';
+	}
+	return "";
+}
+
+function initMorningGrid(value,row,index) {
+	return initBackGroundRedColor(value,row.mCss);
+}
+
+function initBackGroundRedColor(info, color) {
+	return '<div style="background-color:' + color + '">' + info + '</div>';
+}
+</script>
+
+</html>
